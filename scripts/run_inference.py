@@ -17,6 +17,8 @@ See https://hydra.cc/docs/advanced/hydra-command-line-flags/ for more options.
 
 import re
 import os, time, pickle
+from pathlib import Path
+
 import torch
 from omegaconf import OmegaConf
 import hydra
@@ -63,7 +65,19 @@ def get_device_name(conf: Optional[RFDiffusionConfig] = None):
     return name
 
 
-@hydra.main(version_base=None, config_path="../config/inference", config_name="base")
+def get_config_path():
+    xdg_config_home = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+
+    p1 = Path() / "config" / "inference"
+    p2 = Path(__file__).parent / "config" / "inference"
+    p3 = xdg_config_home / "rfdiffusion" / "inference"
+    for p in (p1, p2, p3):
+        if p.exists():
+            return p
+    return p3
+
+
+@hydra.main(version_base=None, config_path=get_config_path(), config_name="base")
 def main(conf: RFDiffusionConfig) -> None:
     logging.basicConfig(level=conf.logging.level)
 

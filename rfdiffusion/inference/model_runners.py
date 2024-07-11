@@ -1,3 +1,4 @@
+from pathlib import Path
 import torch
 import numpy as np
 from omegaconf import DictConfig, OmegaConf
@@ -18,11 +19,24 @@ from rfdiffusion.schemas import RFDiffusionConfig
 
 from rfdiffusion.model_input_logger import pickle_function_call
 
-SCRIPT_DIR=os.path.dirname(os.path.realpath(__file__))
+SCRIPT_DIR= Path(__file__).resolve().parent
 
 TOR_INDICES  = util.torsion_indices
 TOR_CAN_FLIP = util.torsion_can_flip
 REF_ANGLES   = util.reference_angles
+
+xdg_data_home = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+xdg_cache_home = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
+
+p1 = xdg_data_home / "rfdiffusion" / "models"
+p2 = SCRIPT_DIR.parent.parent / "models"
+DEFAULT_MODELS_DIR = str(p2 if p2.exists() else p1)
+
+p1 = xdg_cache_home / "rfdiffusion" / "schedules"
+p2 = SCRIPT_DIR.parent.parent / "schedules"
+DEFAULT_IGSO3_SCHEDULES_DIR = str(p2 if p2.exists() else p1)
+
+DEFAULT_PDB_FILE = SCRIPT_DIR.parent.parent / "examples" / "input_pdbs" / "1qys.pdb"
 
 
 class Sampler:
@@ -60,7 +74,7 @@ class Sampler:
         if conf.inference.model_directory_path is not None:
             model_directory = conf.inference.model_directory_path
         else:
-            model_directory = os.path.realpath(f"{SCRIPT_DIR}/../../models")
+            model_directory = DEFAULT_MODELS_DIR
 
         self._log.info(f"Reading models from {model_directory}")
 
@@ -119,11 +133,11 @@ class Sampler:
         if conf.inference.schedule_directory_path is not None:
             schedule_directory = conf.inference.schedule_directory_path
         else:
-            schedule_directory = os.path.realpath(f"{SCRIPT_DIR}/../../schedules")
+            schedule_directory = DEFAULT_IGSO3_SCHEDULES_DIR
 
         # Check for cache schedule
         if not os.path.exists(schedule_directory):
-            os.mkdir(schedule_directory)
+            os.makedirs(schedule_directory)
         self.diffuser = Diffuser(**self._conf.diffuser, cache_dir=schedule_directory)
 
         ###########################
@@ -144,7 +158,7 @@ class Sampler:
         
         if self.inf_conf.input_pdb is None:
             # set default pdb
-            self.inf_conf.input_pdb= os.path.realpath(os.path.join(SCRIPT_DIR, '../../examples/input_pdbs/1qys.pdb'))
+            self.inf_conf.input_pdb= DEFAULT_PDB_FILE
         self.target_feats = iu.process_target(self.inf_conf.input_pdb, parse_hetatom=True, center=False)
         self.chain_idx = None
 
