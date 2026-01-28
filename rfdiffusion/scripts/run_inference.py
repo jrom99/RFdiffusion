@@ -65,16 +65,18 @@ def get_device_name(conf: Optional[RFDiffusionConfig] = None):
     return name
 
 
-def get_config_path():
+def get_config_path() -> str:
+    """Look for configuration files, first on current directory then on default/global paths"""
     xdg_config_home = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+    from importlib.resources import files
 
     p1 = Path() / "config" / "inference"
-    p2 = Path(__file__).parent / "config" / "inference"
-    p3 = xdg_config_home / "rfdiffusion" / "inference"
+    p2 = xdg_config_home / "rfdiffusion" / "inference"
+    p3 = files("rfdiffusion").joinpath("config/inference")
     for p in (p1, p2, p3):
-        if p.exists():
-            return p
-    return p3
+        if p.exists():  # type: ignore
+            return str(p)
+    return str(p3)
 
 
 @hydra.main(version_base=None, config_path=get_config_path(), config_name="base")

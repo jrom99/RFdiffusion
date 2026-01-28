@@ -1,10 +1,10 @@
 name: rfd
 channels:
-  - defaults
-  - conda-forge
   - pytorch
   - dglteam
   - nvidia
+  - conda-forge
+  - defaults
 dependencies:
   - python=3.10
   - pytorch<2
@@ -18,9 +18,10 @@ dependencies:
   - pip:
     - hydra-core
     - pyrsistent
-    - e3nn
+    - e3nn<0.5
     - pynvml
     - git+https://github.com/NVIDIA/dllogger#egg=dllogger
     - decorator
-    - ./env/SE3Transformer/
-    - -e ./
+    - ./SE3Transformer/
+    # - -e ./
+    - ./

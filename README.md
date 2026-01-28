@@ -61,7 +61,7 @@ If you want to set up RFdiffusion locally, follow the steps below:
 
 To get started using RFdiffusion, clone the repo:
 ```
-git clone https://github.com/RosettaCommons/RFdiffusion.git
+git clone https://github.com/jrom99/RFdiffusion.git
 ```
 
 You'll then need to download the model weights into the RFDiffusion directory.
@@ -91,9 +91,13 @@ Ensure that you have either [Anaconda or Miniconda](https://conda.io/projects/co
 You also need to install [NVIDIA's implementation of SE(3)-Transformers](https://developer.nvidia.com/blog/accelerating-se3-transformers-training-using-an-nvidia-open-source-model-implementation/) Here is how to install the NVIDIA SE(3)-Transformer code alongside RFDiffusion.
 
 ```
-conda env create -f env/conda.yml
+conda env create -f conda.yml
 conda activate rfd
 ```
+
+Total setup should take less than 30 minutes on a standard desktop computer.
+Note: Due to the variation in GPU types and drivers that users have access to, we are not able to make one environment that will run on all setups. This involves changing cudatoolkit and dgl-cuda on the conda.yml file.
+
 
 Anytime you run diffusion you should be sure to activate this conda environment by running the following command:
 ```
@@ -103,8 +107,7 @@ conda activate rfd
 run_inference.py --help
 ```
 
-Total setup should take less than 30 minutes on a standard desktop computer.
-Note: Due to the variation in GPU types and drivers that users have access to, we are not able to make one environment that will run on all setups. As such, we are only providing a yml file with support for CUDA 11.1 and leaving it to each user to customize it to work on their setups. This customization will involve changing the cudatoolkit and (possibly) the PyTorch version specified in the yml file.
+This will search for configuration files automatically on your current folder, then search for files on `XDG_CONFIG_HOME/rfdiffusion`, with a fallback the files in this repo.
 
 ---
 

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rfdiffusion"
+version = "1.1.1"
+description = "RFdiffusion is an open source method for protein structure generation."
+authors = [
+    { name = "Rosetta Commons" }
+]
+requires-python = ">= 3.10"
+
+dependencies = [
+    "torch",
+    "se3-transformer"
+]
+
+[project.urls]
+Homepage = "https://github.com/RosettaCommons/RFdiffusion"
+
+[project.scripts]
+run_inference = "rfdiffusion.scripts.run_inference:main"
+
+[tool.setuptools.package-data]
+rfdiffusion = ["config/inference/*yaml"]
+
+[tool.setuptools.packages.find]
+where = ["."]
